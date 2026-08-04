@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const {
+    createProduct,
     getProducts,
     getProduct,
-    createProduct,
     updateProduct,
     deleteProduct
-} = require("../controllers/productController");
+} = require("../controllers/productControllers");
 
 const auth = require("../middleware/authMiddleware");
 
