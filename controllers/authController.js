@@ -3,9 +3,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
-// REGISTER
+// REGISTER USER
 const register = async (req, res) => {
+
     try {
+
         const { name, email, password } = req.body;
 
 
@@ -30,37 +32,43 @@ const register = async (req, res) => {
 
         // Create user
         const user = await prisma.user.create({
+
             data: {
                 name,
                 email,
                 password: hashedPassword
             }
+
         });
 
 
         res.status(201).json({
+
             message: "User registered successfully",
+
             user: {
                 id: user.id,
                 name: user.name,
                 email: user.email
             }
+
         });
 
 
     } catch (error) {
 
         res.status(500).json({
-            error: error.message
+            message: error.message
         });
 
     }
+
 };
 
 
 
 
-// LOGIN
+// LOGIN USER
 const login = async (req, res) => {
 
     try {
@@ -70,16 +78,20 @@ const login = async (req, res) => {
 
         // Find user
         const user = await prisma.user.findUnique({
+
             where: {
                 email
             }
+
         });
 
 
         if (!user) {
 
             return res.status(400).json({
+
                 message: "Invalid email or password"
+
             });
 
         }
@@ -96,15 +108,18 @@ const login = async (req, res) => {
         if (!passwordMatch) {
 
             return res.status(400).json({
+
                 message: "Invalid email or password"
+
             });
 
         }
 
 
 
-        // Create JWT
+        // Generate JWT token
         const token = jwt.sign(
+
             {
                 id: user.id,
                 email: user.email,
@@ -114,8 +129,9 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
 
             {
-                expiresIn: "21"
+                expiresIn: "1d"
             }
+
         );
 
 
@@ -127,20 +143,24 @@ const login = async (req, res) => {
             token,
 
             user: {
+
                 id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role
+
             }
 
         });
 
 
 
-    } catch(error){
+    } catch (error) {
 
         res.status(500).json({
-            error:error.message
+
+            message: error.message
+
         });
 
     }
