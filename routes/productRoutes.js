@@ -7,12 +7,13 @@ const {
     getProduct,
     updateProduct,
     deleteProduct
-} = require("../controllers/productControllers");
+} = require("../controllers/productController");
 
 const auth = require("../middleware/authMiddleware");
+const roles = require("../middleware/rolesMiddleware");
 
 
-// Get all products
+// Anyone logged in can view products
 router.get("/", auth, getProducts);
 
 
@@ -20,16 +21,31 @@ router.get("/", auth, getProducts);
 router.get("/:id", auth, getProduct);
 
 
-// Create product
-router.post("/", auth, createProduct);
+// Only ADMIN can create product
+router.post(
+    "/",
+    auth,
+    roles("ADMIN"),
+    createProduct
+);
 
 
-// Update product
-router.put("/:id", auth, updateProduct);
+// Only ADMIN can update product
+router.put(
+    "/:id",
+    auth,
+    roles("ADMIN"),
+    updateProduct
+);
 
 
-// Delete product
-router.delete("/:id", auth, deleteProduct);
+// Only ADMIN can delete product
+router.delete(
+    "/:id",
+    auth,
+    roles("ADMIN"),
+    deleteProduct
+);
 
 
 module.exports = router;
